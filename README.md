@@ -23,7 +23,7 @@ A powerful, user-friendly script to create, manage, and work with Git worktrees,
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/git-worktree-manager.git
+git clone https://github.com/nazandr/git-worktree-manager.git
 cd git-worktree-manager
 
 # Make executable
@@ -40,7 +40,7 @@ alias gwt="$(pwd)/git-worktree-manager.sh"
 
 1. **Download the script**
    ```bash
-   curl -O https://raw.githubusercontent.com/your-username/git-worktree-manager/main/git-worktree-manager.sh
+   curl -O https://raw.githubusercontent.com/nazandr/git-worktree-manager/main/git-worktree-manager.sh
    chmod +x git-worktree-manager.sh
    ```
 
@@ -53,7 +53,7 @@ alias gwt="$(pwd)/git-worktree-manager.sh"
 3. **Install completion** (for zsh users)
    ```bash
    # Download completion file
-   curl -O https://raw.githubusercontent.com/your-username/git-worktree-manager/main/_gwt
+   curl -O https://raw.githubusercontent.com/nazandr/git-worktree-manager/main/_gwt
    
    # Copy to completion directory
    cp _gwt /usr/local/share/zsh/site-functions/
@@ -225,7 +225,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 ### Quick Start for Contributors
 
 ```bash
-git clone https://github.com/your-username/git-worktree-manager.git
+git clone https://github.com/nazandr/git-worktree-manager.git
 cd git-worktree-manager
 ./git-worktree-manager.sh help
 ```
