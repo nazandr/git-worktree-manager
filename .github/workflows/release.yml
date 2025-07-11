@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ## Changes in this Release
+            
+            Please see [CHANGELOG.md](CHANGELOG.md) for detailed changes.
+            
+            ## Installation
+            
+            ### Quick Install
+            ```bash
+            curl -O https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/git-worktree-manager.sh
+            chmod +x git-worktree-manager.sh
+            ```
+            
+            ### With Completion
+            ```bash
+            git clone --depth 1 --branch ${{ github.ref_name }} https://github.com/${{ github.repository }}.git
+            cd git-worktree-manager
+            ./install-completion.sh
+            ```
+            
+            ## What's Included
+            - `git-worktree-manager.sh` - Main script
+            - `_gwt` - Zsh completion
+            - `install-completion.sh` - Completion installer
+            - `config.json` - Configuration template
+            
+          draft: false
+          prerelease: false

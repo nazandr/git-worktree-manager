@@ -1,0 +1,136 @@
+#compdef gwt git-worktree-manager.sh
+
+# Zsh completion for Git Worktree Manager
+# Place this file in your $fpath (e.g., /usr/local/share/zsh/site-functions/ or ~/.zsh/completions/)
+
+_gwt() {
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments -C \
+        '1: :_gwt_commands' \
+        '*::arg:->args' \
+        && return 0
+
+    case $state in
+        args)
+            case $line[1] in
+                create)
+                    _gwt_create
+                    ;;
+                switch)
+                    _gwt_switch
+                    ;;
+                remove|rm)
+                    _gwt_remove
+                    ;;
+                list|cleanup|status|help)
+                    # These commands don't take additional arguments
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+# Main command completion
+_gwt_commands() {
+    local commands; commands=(
+        'create:Create a new worktree and open in VS Code'
+        'list:List all worktrees'
+        'switch:Switch to a worktree (open in VS Code)'
+        'remove:Force remove a specific worktree'
+        'rm:Force remove a specific worktree (alias for remove)'
+        'cleanup:Remove merged worktrees (interactive)'
+        'status:Show worktree status and disk usage'
+        'help:Show help message'
+    )
+    _describe -t commands 'command' commands
+}
+
+# Completion for create command
+_gwt_create() {
+    _arguments \
+        '1:branch name:_gwt_branch_names' \
+        '--feature[Mark as feature branch]' \
+        '--hotfix[Mark as hotfix branch]' \
+        '--experiment[Mark as experiment branch]'
+}
+
+# Completion for switch command
+_gwt_switch() {
+    _arguments \
+        '1:worktree name:_gwt_worktree_names'
+}
+
+# Completion for remove command
+_gwt_remove() {
+    _arguments \
+        '1:worktree name:_gwt_worktree_names'
+}
+
+# Get list of existing worktree names
+_gwt_worktree_names() {
+    local worktrees
+    
+    # Check if we're in a git repository
+    if ! git rev-parse --git-dir >/dev/null 2>&1; then
+        return 1
+    fi
+    
+    # Get worktree names by parsing git worktree list output
+    # Format: /path/to/worktree [branch-name]
+    worktrees=(${(f)"$(git worktree list --porcelain | awk '
+        /^worktree / { 
+            path = $2
+            # Extract directory name from path
+            split(path, parts, "/")
+            name = parts[length(parts)]
+            # Skip the main repository
+            if (path !~ /\/\.git$/ && name != "") {
+                print name
+            }
+        }
+    ')"})
+    
+    if [[ ${#worktrees[@]} -gt 0 ]]; then
+        _describe -t worktrees 'worktree' worktrees
+    fi
+}
+
+# Get list of available branch names
+_gwt_branch_names() {
+    local branches
+    
+    # Check if we're in a git repository
+    if ! git rev-parse --git-dir >/dev/null 2>&1; then
+        return 1
+    fi
+    
+    # Get local branches (excluding current branch marker)
+    local local_branches=(${(f)"$(git branch --format='%(refname:short)' 2>/dev/null)"})
+    
+    # Get remote branches that don't exist locally
+    local remote_branches=(${(f)"$(git branch -r --format='%(refname:short)' 2>/dev/null | sed 's|origin/||' | grep -v HEAD)"})
+    
+    # Combine and deduplicate
+    branches=(${(u)local_branches[@]} ${(u)remote_branches[@]})
+    
+    # Add common branch prefixes as suggestions
+    local suggestions=(
+        'feature/'
+        'hotfix/'
+        'bugfix/'
+        'release/'
+        'experiment/'
+    )
+    
+    # Combine existing branches with suggestions
+    branches=(${branches[@]} ${suggestions[@]})
+    
+    if [[ ${#branches[@]} -gt 0 ]]; then
+        _describe -t branches 'branch' branches
+    fi
+}
+
+# Set up the completion function
+_gwt "$@"

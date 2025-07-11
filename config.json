@@ -1,0 +1,33 @@
+{
+  "worktree": {
+    "directory": "../worktrees",
+    "naming": {
+      "pattern": "{repo}-{branch}",
+      "sanitize": true
+    }
+  },
+  "vscode": {
+    "workspace_directory": ".vscode/worktrees",
+    "auto_open": true,
+    "settings": {
+      "git.openRepositoryInParentFolders": "never",
+      "files.autoSave": "afterDelay"
+    },
+    "extensions": {
+      "recommendations": [
+        "ms-vscode.vscode-git",
+        "eamodio.gitlens"
+      ]
+    }
+  },
+  "cleanup": {
+    "auto_remove_merged": false,
+    "confirm_before_delete": true,
+    "keep_main_branches": ["main", "master", "develop"]
+  },
+  "display": {
+    "use_colors": true,
+    "show_disk_usage": true,
+    "verbose": false
+  }
+}
